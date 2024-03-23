@@ -22,8 +22,8 @@ def read_inventory(user_id: int):
         raise HTTPException(status_code=404, detail="Inventory not found")
     return inventory
 
-@app.delete("/inventory/remove/{user_id}/{item_name}")
-def remove_item_route(user_id: str, item_name: str):
+@app.delete("/inventory/remove/{item_name}/{user_id}")
+def remove_item_route(item_name: str, user_id: str):
     remove_item(item_name, user_id)
     return {"message": "Item removed from inventory"}
 
