@@ -30,17 +30,21 @@ def print_values(protein, fat, carbs, calories):
     print(f"Fats: {fat:.2f} g")
     print(f"Carbohydrates: {carbs:.2f} g")
 
-def main():
-    print("Welcome to the Macro Calculator")
-    
-    # User Inputs
+def input_macros():
     gender = input("Enter your gender (male/female): ")
     height = float(input("Enter your height in cm: "))
     weight = float(input("Enter your weight in kg: "))
     age = int(input("Enter your age in years: "))
     activity_level = input("Enter your activity level (sedentary, lightly active, moderately active, very active, extra active): ")
-    
+    return gender, height, weight, age, activity_level
+
+
+def main():
+    gender, height, weight, age, activity_level = input_macros()
+
     protein, fat, carbs, calories = calculate_macros(gender, height, weight, age, activity_level)
+
+    print_values(protein, fat, carbs, calories)
 
 if __name__ == "__main__":
     main()
