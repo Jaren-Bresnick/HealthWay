@@ -42,3 +42,9 @@ secrets/
 env/
 .env
 env
+.venv
+
+
+#yolo model
+yolov3.cfg
+yolov3.weights
