@@ -23,25 +23,3 @@ def connect_to_postgres():
     )
 
     return conn
-
-def main():
-    try:
-        # Connect to PostgreSQL
-        conn = connect_to_postgres()
-        print("Connected to PostgreSQL successfully!")
-
-        # Perform database operations
-        # For example:
-        # cursor = conn.cursor()
-        # cursor.execute("SELECT * FROM your_table")
-        # rows = cursor.fetchall()
-        # print(rows)
-
-        # Don't forget to close the connection when done
-        conn.close()
-        print("Connection to PostgreSQL closed.")
-    except Exception as e:
-        print("Error:", e)
-
-if __name__ == "__main__":
-    main()
