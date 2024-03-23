@@ -1,3 +1,4 @@
+# file name: object_detection_and_tracking.py
 import cv2
 import numpy as np
 
@@ -40,36 +41,27 @@ def draw_bounding_boxes_and_detect_object(image, net, output_layers):
     
     return image, main_object_center_x['x_center'] if main_object_center_x else None
 
-# Load YOLO
-net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
-layer_names = net.getLayerNames()
+def detect_and_track_object(image_paths):
+    # Load YOLO
+    net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+    layer_names = net.getLayerNames()
 
-# Fix for the IndexError
-out_layer_indexes = net.getUnconnectedOutLayers().flatten()
-output_layers = [layer_names[i - 1] for i in out_layer_indexes]
+    # Fix for the IndexError
+    out_layer_indexes = net.getUnconnectedOutLayers().flatten()
+    output_layers = [layer_names[i - 1] for i in out_layer_indexes]
 
-# Load images
-image1 = cv2.imread("images/bottle1.jpg")
-image2 = cv2.imread("images/bottle2.jpg")
+    results = []
+    for image_path in image_paths:
+        image = cv2.imread(image_path)
+        processed_image, position = draw_bounding_boxes_and_detect_object(image, net, output_layers)
+        results.append((processed_image, position))
+        # Save the images with bounding boxes
+        cv2.imwrite(image_path.replace('.jpg', '_with_boxes.jpg'), processed_image)
 
-# Draw bounding boxes on images and detect main object
-image1_with_boxes, position1 = draw_bounding_boxes_and_detect_object(image1, net, output_layers)
-image2_with_boxes, position2 = draw_bounding_boxes_and_detect_object(image2, net, output_layers)
+    # Determine direction
+    if all(position is not None for _, position in results):
+        direction = "The object moves from left to right." if results[1][1] > results[0][1] else "The object moves from right to left."
+    else:
+        direction = "Could not determine the object's direction."
 
-# Save the images with bounding boxes
-cv2.imwrite("images/image1_with_boxes.jpg", image1_with_boxes)
-cv2.imwrite("images/image2_with_boxes.jpg", image2_with_boxes)
-
-# Determine direction
-if position1 is not None and position2 is not None:
-    direction = "The object moves from left to right." if position2 > position1 else "The object moves from right to left."
-else:
-    direction = "Could not determine the object's direction."
-
-print(direction)
-
-# Optionally display the images
-# cv2.imshow("Image 1", image1_with_boxes)
-# cv2.imshow("Image 2", image2_with_boxes)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+    return direction
