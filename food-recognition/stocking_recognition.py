@@ -1,3 +1,5 @@
-import food_recognition.py
+import food_recognition
 
-food_recognition.identify_food_in_images("images/tomatocarrot.jpg")
+# Call the function with the relative path to the image file
+food_recognition.main("R:/HooHacks/FoodInventory/food-recognition/images/test/tomatocarrot.jpg")
+
