@@ -36,7 +36,7 @@ model = genai.GenerativeModel(model_name="gemini-1.0-pro-vision-latest",
                               safety_settings=safety_settings)
 
 # Directory containing images
-image_dir = Path("images")
+image_dir = Path("images/test")
 
 # Validate that the directory exists
 if not image_dir.exists() or not image_dir.is_dir():
@@ -45,44 +45,57 @@ if not image_dir.exists() or not image_dir.is_dir():
 # List to store combined food items from all images
 all_food_items = []
 
-# Loop through each image in the images directory
-for image_path in image_dir.glob("*.jpeg"):  # Assuming JPEG format; adjust if necessary
-    image_parts = [
-        {
-            "mime_type": "image/jpeg",
-            "data": image_path.read_bytes()
-        },
-    ]
+# List of image formats to process
+image_formats = ["*.jpeg", "*.jpg", "*.png"]
 
-    prompt_parts = [
-        image_parts[0],
-        "\nGiven the image of the fridge or food, please generate a json file of food items that are present in the fridge and the quantity of each."
-    ]
+# Loop through each image format
+for img_format in image_formats:
+    # Loop through each image in the images directory for the current format
+    for image_path in image_dir.glob(img_format):
+        # Determine the correct MIME type based on the file extension
+        if image_path.suffix.lower() == ".png":
+            mime_type = "image/png"
+        else:
+            mime_type = "image/jpeg"
+        
+        # Prepare the image part for the API request
+        image_parts = [
+            {
+                "mime_type": mime_type,
+                "data": image_path.read_bytes()
+            },
+        ]
 
-    # Generate content for each image
-    response = model.generate_content(prompt_parts)
-    response_text = response.text  # Assuming 'text' attribute holds the response; adjust as needed
-    print(response_text)
+        prompt_parts = [
+            image_parts[0],
+            "\nGiven the image of the fridge, please generate a json file of 'food_items' that are present in the fridge and the quantity of each. Only put foods and items in the list that you are 70 percent sure of."
+        ]
 
-    #Remove ```json from the response
-    response_text = response.text.replace('```json', '')
+        # Generate content for each image
+        response = model.generate_content(prompt_parts)
+        response_text = response.text  # Assuming 'text' attribute holds the response; adjust as needed
 
-    #Remove ``` from the response
-    response_text = response_text.replace('```', '')
+        #Remove ```json from the response
+        response_text = response.text.replace('```json', '')
 
-    # Remove any leading/trailing formatting if necessary
-    # Assuming response_text is directly parseable JSON; adjust if your actual response format differs
-    try:
-        food_data = json.loads(response_text)
-        all_food_items.extend(food_data["food_items"])
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON from response for image {image_path}: {e}")
+        #Remove ``` from the response
+        response_text = response_text.replace('```', '')
+
+        print(response_text)
+
+        # Assuming response_text is directly parseable JSON; adjust if your actual response format differs
+        try:
+            food_data = json.loads(response_text)
+            all_food_items.extend(food_data["food_items"])
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON from response for image {image_path}: {e}")
+
 
 # Combine all food items into one JSON object
 combined_food_data = {"food_items": all_food_items}
 
 # Print or save the combined JSON
-# print(json.dumps(combined_food_data, indent=2))
+#print(json.dumps(combined_food_data, indent=2))
 
 # After processing all images and combining the data
 # Assuming 'name' key exists for each food item in your JSON structure
