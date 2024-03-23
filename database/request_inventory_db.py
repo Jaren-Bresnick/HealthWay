@@ -68,3 +68,14 @@ def update_item_quantity_by_id(id, item_quantity):
     cursor.close()
     db.close()
 
+def get_all_products(user_id):
+    db = connect_to_postgres()
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT Product FROM Inventory WHERE UserId = %s",
+        (user_id)
+    )
+    products = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return products
