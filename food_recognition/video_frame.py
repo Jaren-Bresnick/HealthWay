@@ -38,3 +38,5 @@ def video_analysis(video_path):
 
     return stocking_recognition.process_images_and_detect_motion(frames_to_analyze)
     
+
+print(video_analysis("final_test_files/stocking_videos/potato_in.mp4"))  # Example usage
