@@ -3,9 +3,9 @@ import sys
 import os 
 sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('../food_recognition'))
-import food_recognition.motion_recognition as motion_recognition
+import motion_recognition
 
-def extract_frames(video_path, output_path, frame_count=3):
+def extract_frames(video_path, output_path, frame_count=10):
     # Open the video file
     cap = cv2.VideoCapture(video_path)
     frame_rate = cap.get(cv2.CAP_PROP_FPS)
@@ -41,7 +41,7 @@ def extract_frames(video_path, output_path, frame_count=3):
 video_path = "video.mp4"
 output_path = "output_frames"
 frames_to_analyze_path = "frames_to_analyze"
-extract_frames(video_path, output_path, frame_count=10)  # Collect 10 frames
+extract_frames(video_path, output_path, frame_count=7)  # Collect 10 frames
 
 # Get the paths of the extracted frames
 frame_files = sorted([os.path.join(output_path, f) for f in os.listdir(output_path) if f.endswith('.jpg')])
@@ -51,7 +51,7 @@ if not os.path.exists(frames_to_analyze_path):
     os.makedirs(frames_to_analyze_path)
 
 # Move the selected frames to the frames_to_analyze directory
-for i, idx in enumerate([2,6], start=1):
+for i, idx in enumerate([3,7], start=1):
     frame_path = frame_files[idx]
     new_path = os.path.join(frames_to_analyze_path, f"frame_{i}.jpg")
     os.replace(frame_path, new_path)  # Overwrite existing files if they exist
