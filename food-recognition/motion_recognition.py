@@ -60,7 +60,8 @@ def detect_and_track_object(image_paths):
 
     # Determine direction
     if all(position is not None for _, position in results):
-        direction = "The object moves from left to right." if results[1][1] > results[0][1] else "The object moves from right to left."
+        #Assume sensor is on the right side
+        direction = "In" if results[1][1] > results[0][1] else "Out"
     else:
         direction = "Could not determine the object's direction."
 
