@@ -1,61 +1,53 @@
 import sys
+from typing import Optional
 sys.path.append('../database')
 from connect_db import connect_to_postgres
 
-def add_pharmacy_item(product, dosage, quantity, refills, expiration_date, pills_per_day, description_of_medication, user_id):
+def add_or_update_pill(name: str, dose_size: str, pill_count: int, refill_date: Optional[str], expiry_date: Optional[str], description_of_medication: str, pills_used_per_day: int, user_id: int):
     db = connect_to_postgres()
     cursor = db.cursor()
+    
+    # Convert "N/A" to None for expiry_date
+    expiry_date = None if expiry_date == "N/A" else expiry_date
+    
+    # Attempt to update first
     cursor.execute(
-        'INSERT INTO "PrescriptionItems" (Medication, Dosage, PillCount, RefillDate, ExpiryDate, PillsUsedPerDay, DescriptionOfMedication, UserId) VALUES (%s, %s, %s, %s, %s, %s)',
-        (product, dosage, quantity, refills, expiration_date, pills_per_day, description_of_medication, user_id)
+        'UPDATE "Pharmacy" SET dose_size = %s, pill_count = pill_count + %s, refill_date = %s, expiry_date = %s, description_of_medication = %s, pills_used_per_day = %s WHERE name = %s AND user_id = %s',
+        (dose_size, pill_count, refill_date, expiry_date, description_of_medication, pills_used_per_day, name, user_id)
     )
+    
+    # If no row was updated, insert a new one
+    if cursor.rowcount == 0:
+        cursor.execute(
+            'INSERT INTO "Pharmacy" (name, dose_size, pill_count, refill_date, expiry_date, description_of_medication, pills_used_per_day, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+            (name, dose_size, pill_count, refill_date, expiry_date, description_of_medication, pills_used_per_day, user_id)
+        )
+
     db.commit()
     cursor.close()
     db.close()
 
-def get_pharmacy_items(user_id):
+def get_pills(user_id: int):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        'SELECT Medication, Dosage, PillCount, RefillDate, ExpiryDate, PillsUsedPerDay, DescriptionOfMedication FROM "PrescriptionItems" WHERE UserId = %s',
+        'SELECT name, dose_size, pill_count, refill_date, expiry_date, description_of_medication, pills_used_per_day FROM "Pharmacy" WHERE user_id = %s',
         (user_id,)
     )
-    items = cursor.fetchall()
+    pills = cursor.fetchall()
     cursor.close()
     db.close()
-    return items
+    return pills
 
-def remove_pharmacy_item(product, user_id):
+def remove_pill(name: str, user_id: int):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        'DELETE FROM "PrescriptionItems" WHERE Medication = %s AND UserId = %s',
-        (product, user_id)
+        'DELETE FROM "Pharmacy" WHERE name = %s AND user_id = %s',
+        (name, user_id)
     )
     db.commit()
     cursor.close()
     db.close()
 
-def update_pharmacy_item(user_id, product, dosage, quantity, refills, expiration_date, pills_per_day, description_of_medication):
-    db = connect_to_postgres()
-    cursor = db.cursor()
-    cursor.execute(
-        'UPDATE "PrescriptionItems" SET Dosage = %s, PillCount = %s, RefillDate = %s, ExpiryDate = %s, PillsUsedPerDay = %s, DescriptionOfMedication = %s, WHERE Medication = %s AND UserId = %s',
-        (dosage, quantity, refills, expiration_date, pills_per_day, description_of_medication, product, user_id)
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-
-def get_pharmacy_product_by_name(user_id, product_name):
-    db = connect_to_postgres()
-    cursor = db.cursor()
-    cursor.execute(
-        'SELECT Medication, Dosage, PillCount, RefillDate, ExpiryDate, PillsUsedPerDay, DescriptionOfMedication FROM "PrescriptionItems" WHERE Product = %s AND UserId = %s',
-        (product_name, user_id)
-    )
-    product = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return product
-
+# Additional functions like updating individual pill info or removing a pill by id can be added here similarly.
