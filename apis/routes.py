@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
+from datetime import date
 
 
 import sys
@@ -40,11 +42,13 @@ class Item(BaseModel):
     userid: str
 
 class Pill(BaseModel):
-    product: str
-    dosage: str
-    quantity: int
-    refill_date: str
-    expiration_date: str
+    name: str
+    dose_size: str
+    pill_count: int
+    refill_date: Optional[date]
+    expiry_date: Optional[date]
+    description_of_medication: str
+    pills_used_per_day: int
 
 class ImageData(BaseModel):
     type_of_image: str
@@ -209,7 +213,29 @@ def get_all_recipes(user_id: str):
     
 ''' ----------- PHARMACY ROUTES -------------- '''
 
+@app.post("/pills/add_or_update")
+async def add_or_update_pill_route(pill: Pill, user_id: str):
+    add_or_update_pill(pill.dict(), user_id)
+    return {"message": "Pill added or updated"}
 
+@app.get("/pills/get/{user_id}")
+def get_pills_route(user_id: str):
+    pills = get_pills(user_id)
+    if not pills:
+        raise HTTPException(status_code=404, detail="No pills found")
+    return pills
+
+@app.delete("/pills/remove/{pill_name}/{user_id}")
+def remove_pill_route(pill_name: str, user_id: str):
+    remove_pill(pill_name, user_id)
+    return {"message": "Pill removed from the list"}
+
+@app.get("/pills/description/{user_id}")
+def get_pill_descriptions_route(user_id: str):
+    descriptions = get_pill_descriptions(user_id)
+    if not descriptions:
+        raise HTTPException(status_code=404, detail="No pill descriptions found")
+    return descriptions
 
 
 ''' -------------- IMAGE PROCESSING ROUTES --------------- '''
@@ -257,6 +283,8 @@ def process_image(data: ImageData, user_id: str):
             if product == item.product:
                 update_item_quantity_route(user_id, item.product, item.quantity)
                 return {"message": "Processed successfully", "item": item}
+            else:
+                add_item_route(item)
     elif type_of_image == "stocking":
         if json_file["motion"] == "Out":
             remove_item_route(item)
