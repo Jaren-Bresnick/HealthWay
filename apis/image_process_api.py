@@ -3,12 +3,13 @@ from pydantic import BaseModel
 from pathlib import Path
 import sys
 import os
-sys.path.append(os.path.abspath('..'))
-import food_recognition.food_recognition
-import food_recognition.receipt_recognition
-import food_recognition.motion_recognition
-import food_recognition.stocking_recognition
-import pills_recognition.pills_recognition
+sys.path.append(os.path.abspath('../food_recognition'))
+sys.path.append(os.path.abspath('../pills_recognition'))
+import food_recognition
+import receipt_recognition
+import motion_recognition
+import stocking_recognition
+import pills_recognition
 
 app = FastAPI()
 
