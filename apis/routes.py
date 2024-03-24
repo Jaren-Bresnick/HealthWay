@@ -241,7 +241,6 @@ def get_pill_descriptions_route(user_id: str):
 ''' -------------- IMAGE PROCESSING ROUTES --------------- '''
 
 @app.post("/process_image/")
-@app.get("/inventory/get_json/{user_id}")   #DANIEL HUYNH LOOK AT THIS
 def process_image(data: ImageData, user_id: str):
     type_of_image = data.type_of_image
     image_path = data.image_path
