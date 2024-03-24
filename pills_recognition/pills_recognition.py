@@ -54,7 +54,7 @@ def identify_pills_in_image(image_path):
 
     prompt_parts = [
         image_parts[0],
-        "\nGiven the prescription bottle label, please generate a json file of 'prescription_items'. Identify values Name, dose size, pill count, refill date, expiry date, pills used per day as an integer. Only put pills in the list that you are 70 percent sure of."
+        "\nGiven the prescription bottle label, please generate a json file of 'prescription_items'. Identify values Name, dose size, pill count, refill date, expiry date, description of medication, and pills used per day as an integer. Only put pills in the list that you are 70 percent sure of."
     ]
 
     # Generate content for the image
