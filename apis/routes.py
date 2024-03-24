@@ -7,6 +7,7 @@ import mimetypes
 import asyncio
 from typing import Optional
 from datetime import date
+import asyncio
 
 
 import sys
@@ -314,23 +315,21 @@ def process_image(file: UploadFile, type_of_image: str):
 
 @app.post("/process_video")
 async def process_video(file: UploadFile = File(...)):
-
-    # data = file.file.read()
     file_directory = os.path.dirname(__file__)
     filename = "video.mp4"
     file_path = os.path.join(file_directory, filename)
     try:
-        with open(file_path, 'wb') as temp_file:
-            async for chunk in file.file:
-                temp_file.write(chunk)
+        # Correctly await the result of the file reading operation
+        file_content = await asyncio.get_event_loop().run_in_executor(None, file.file.read)
 
+        with open(file_path, 'wb') as temp_file:
+            temp_file.write(file_content)
             temp_path = temp_file.name
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process the video: {str(e)}")
     finally:
         await file.close()
 
-    # process
     video_analysis(temp_path)
 
     return {"message": "Processed successfully"}
-
-    
