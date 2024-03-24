@@ -14,15 +14,6 @@ class User(BaseModel):
 
 app = FastAPI()
 
-@app.get("/users/test")
-async def test_route():
-    value = test()
-    return {"message": value}
-
-@app.post("/users/addnewtable")
-async def addnewtable_route():
-    addnewtable()
-    return {"message": "Table added"}
 
 @app.post("/users/add_user")
 async def add_user_route(user: User):
