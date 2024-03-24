@@ -18,6 +18,7 @@ import food_recognition.stocking_recognition as stocking_recognition
 from database.request_users_db import add_user, get_user, remove_user, update_user_email, update_user_firstname, update_user_lastname, update_user_password, get_all_users
 from database.request_userhealth_db import add_userhealth, get_userhealth, remove_userhealth, update_userhealth_gender, update_userhealth_height, update_userhealth_weight, update_userhealth_age, update_userhealth_activity_level
 from database.request_inventory_db import add_item, get_inventory, remove_item, remove_item_by_id, update_item_quantity, update_item_quantity_by_id, get_all_products
+from database.request_pharmacy_db import add_or_update_pill, get_pharmacy_items, remove_pharmacy_item, get_pill_descriptions
 from recipe_api.recipe_api import get_recipes
 import pills_recognition.pills_recognition as pills_recognition
 
@@ -220,14 +221,14 @@ async def add_or_update_pill_route(pill: Pill, user_id: str):
 
 @app.get("/pills/get/{user_id}")
 def get_pills_route(user_id: str):
-    pills = get_pills(user_id)
+    pills = get_pharmacy_items(user_id)
     if not pills:
         raise HTTPException(status_code=404, detail="No pills found")
     return pills
 
 @app.delete("/pills/remove/{pill_name}/{user_id}")
 def remove_pill_route(pill_name: str, user_id: str):
-    remove_pill(pill_name, user_id)
+    remove_pharmacy_item(pill_name, user_id)
     return {"message": "Pill removed from the list"}
 
 @app.get("/pills/description/{user_id}")
