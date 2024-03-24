@@ -197,6 +197,10 @@ def get_all_recipes(user_id: int):
 
     return get_recipes(product_list)
     
+''' ----------- PHARMACY ROUTES ----------- '''
+
+
+
 
 ''' -------------- IMAGE PROCESSING ROUTES --------------- '''
 

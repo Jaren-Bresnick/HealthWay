@@ -54,12 +54,13 @@ def identify_pills_in_image(image_path):
 
     prompt_parts = [
         image_parts[0],
-        "\nGiven the prescription bottle label, please generate a json file of 'prescription items' that are present."
+        "\nGiven the prescription bottle label, please generate a json file of 'prescription_items'. Identify values Name, dose size, pill count, refill date, expiry date, pills used per day as an integer. Only put pills in the list that you are 70 percent sure of."
     ]
 
     # Generate content for the image
     response = model.generate_content(prompt_parts)
     response_text = response.text
+    print(response_text)
 
     #Remove ```json from the response
     response_text = response.text.replace('```json', '')
@@ -80,9 +81,7 @@ def main(image_path):
     configure_genai()
     # Call the function to process the single image file
     pill_info = identify_pills_in_image(image_path)
-    print(pill_info)
     return pill_info
-    print("Prescription items found in the image:", ", ".join(food_names))
 
 if __name__ == "__main__":
     import sys
