@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
-from database.request_inventory_db import add_item, get_inventory, remove_item, remove_item_by_id, update_item_quantity, update_item_quantity_by_id
+from database.request_inventory_db import add_item, get_inventory, remove_item, remove_item_by_id, update_item_quantity, update_item_quantity_by_id, get_all_products
+from recipe_api.recipe_api import get_recipes
 
 class Item(BaseModel):
     product: str
@@ -42,7 +43,24 @@ def update_item_quantity_by_id_route(id: int, item_quantity: int):
     update_item_quantity_by_id(id, item_quantity)
     return {"message": "Item quantity updated"}
 
+@app.get("/inventory/get_json/{user_id}")
+def read_inventory_products_and_quantities(user_id: int):
+    inventory = get_inventory(user_id)
+    if not inventory:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+    products_and_quantities = {}
+    for product, quantity in inventory:
+        products_and_quantities[product] = quantity
+    return products_and_quantities
 
+@app.get("/inventory/get_recipes/{user_id}")
+def get_all_recipes(user_id: int):
+    all_products = get_all_products(user_id)
+    if not all_products:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+    product_list = []
+    for product in all_products:
+        product_list.append(product[0])
 
-
-
+    return get_recipes(product_list)
+    
