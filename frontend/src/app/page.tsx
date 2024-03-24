@@ -8,7 +8,7 @@ export default function Home() {
 
         <div className='flex flex-col text-start'>
           <p className='font-bold text-2xl'>Good Afternoon, Shrisha</p>
-          <p className='text-slate-500'>Today is Sunday. Welcome to HealthView. Use the dashboard below to see your personalized recipies, what pills you need to take, and the inventory of food that you have.</p>
+          <p className='text-slate-500'>Today is Sunday. Welcome to HealthView. Use the dashboard below to see your personalized recipes, what pills you need to take, and the inventory of food that you have.</p>
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
