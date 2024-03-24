@@ -207,7 +207,7 @@ def get_all_recipes(user_id: str):
 
     return get_recipes(product_list)
     
-''' ----------- PHARMACY ROUTES ----------- '''
+''' ----------- PHARMACY ROUTES -------------- '''
 
 
 
