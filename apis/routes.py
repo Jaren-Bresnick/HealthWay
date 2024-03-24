@@ -2,10 +2,12 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile
+import tempfile
 import mimetypes
 import asyncio
 from typing import Optional
 from datetime import date
+import asyncio
 
 
 import sys
@@ -24,6 +26,7 @@ from database.request_inventory_db import add_item, get_inventory, remove_item, 
 from database.request_pharmacy_db import add_or_update_pill, get_pills, remove_pill
 from recipe_api.recipe_api import get_recipes
 import pills_recognition.pills_recognition as pills_recognition
+from food_recognition.video_frame import video_analysis
 
 class User(BaseModel):
     userid: str
@@ -304,5 +307,52 @@ def process_image(file: UploadFile, type_of_image: str):
                         update_item_quantity("abc", item.product, current_inventory[item.product] + item.quantity)
                     else:
                         asyncio.run(add_item_route(item))
+
+    return {"message": "Processed successfully"}
+
+
+''' -------------- VIDEO UPLOAD --------------- '''
+
+@app.post("/process_video")
+async def process_video(file: UploadFile = File(...)):
+    file_directory = os.path.dirname(__file__)
+    filename = "video.mp4"
+    file_path = os.path.join(file_directory, filename)
+    try:
+        # Correctly await the result of the file reading operation
+        file_content = await asyncio.get_event_loop().run_in_executor(None, file.file.read)
+
+        with open(file_path, 'wb') as temp_file:
+            temp_file.write(file_content)
+            temp_path = temp_file.name
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process the video: {str(e)}")
+    finally:
+        await file.close()
+
+    food_items, direction = video_analysis(temp_path)
+    
+    if (food_items == None):
+        return {"message": "Processed not workd"}
+    
+    print('here')
+    print(food_items)
+    
+    current_inventory = read_inventory_products_and_quantities("abc")
+
+    for item in food_items:
+        newItem = Item(product=item["name"],
+                    quantity=item["quantity"],
+                    userid="abc")
+        if direction == "Out":
+            if item["name"] in current_inventory:
+                update_item_quantity("abc", item["name"], current_inventory[item["name"]] - item["quantity"])
+            else:
+                remove_item_route(newItem)
+        elif direction == "In":
+            if item["name"] in current_inventory:
+                update_item_quantity("abc", item["name"], current_inventory[item["name"]] + item["quantity"])
+            else:
+                await add_item_route(newItem)
 
     return {"message": "Processed successfully"}
