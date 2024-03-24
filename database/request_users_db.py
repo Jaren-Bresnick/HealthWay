@@ -1,10 +1,39 @@
+import sys
+sys.path.append('../database')
 from connect_db import connect_to_postgres 
+
+
+def test():
+    db = connect_to_postgres()
+    cursor = db.cursor()
+    cursor.execute("""
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+    """)
+    tables = cursor.fetchall()
+    val = []
+    for table in tables:
+        val.append(table[0])
+    cursor.close()
+    db.close()
+    return val
+
+def addnewtable():
+    db = connect_to_postgres()
+    cursor = db.cursor()
+    cursor.execute(
+        'CREATE TABLE "users2" (UserId VARCHAR(255) PRIMARY KEY, HashedPassword VARCHAR(255), FirstName VARCHAR(255), LastName VARCHAR(255), Email VARCHAR(255)); commit;'
+    )
+    db.commit()
+    cursor.close()
+    db.close()
 
 def add_user(user_id, password, firstname, lastname, email):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "INSERT INTO Users (UserId, HashedPassword, FirstName, LastName, Email) VALUES (%s, %s, %s, %s, %s)",
+        'INSERT INTO "Users" (UserId, HashedPassword, FirstName, LastName, Email) VALUES (%s, %s, %s, %s, %s)',
         (user_id, password, firstname, lastname, email)
     )
     db.commit()

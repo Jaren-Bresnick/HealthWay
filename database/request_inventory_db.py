@@ -1,4 +1,6 @@
-from connect_db import connect_to_postgres 
+import sys
+sys.path.append('../database')
+from connect_db import connect_to_postgres
 
 def add_item(item_name, item_quantity, user_id):
     db = connect_to_postgres()

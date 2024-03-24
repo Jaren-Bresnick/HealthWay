@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../database')
 from connect_db import connect_to_postgres
 
 def add_userhealth(user_id, gender, height, weight, age, activity_level):
