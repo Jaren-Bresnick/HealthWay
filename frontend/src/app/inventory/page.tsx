@@ -5,7 +5,7 @@ import IconButton from '@mui/joy/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
@@ -22,27 +22,40 @@ function createData(
   return { name, quantity };
 }
 
-
-const rows = [
-  createData("Tomato", 4),
-  createData('Apple', 10),
-  createData('Marinara Sauce', 1),
-  createData('Bagels', 6),
-];
-
-
-
 export default function Home() {
 
-  const [data, setData] = useState(rows);
+  const [data, setData] = useState(null);
   const [openAddItemModal, setOpenAddItemModal] = useState(false);
   const [openReceiptModal, setOpenReceiptModal] = useState(false);
   const [openPantryModal, setOpenPantryModal] = useState(false);
 
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/inventory/get/abc')
+      .then(response => response.json())
+      .then(data => {
+        let toAdd = []
+        for (let item of data) {
+          toAdd.push(createData(item[0], item[1]))
+        }
+        setData(toAdd);
+      });
+  }, []);
+
   const increaseQuantity = (index: number) => {
     const newData = [...data];
+    const newQuantity = data[index].quantity + 1;
     newData[index].quantity += 1;
     setData(newData);
+
+    const requestOptions = {
+      method: "PUT",
+    };
+
+    fetch(`http://127.0.0.1:8000/inventory/update_quantity/abc/${data[index].name}/${newQuantity}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
   }
 
   const decreaseQuantity = (index: number) => {
@@ -50,20 +63,59 @@ export default function Home() {
       return
     }
     const newData = [...data];
+    const newQuantity = data[index].quantity - 1;
     newData[index].quantity -= 1;
     setData(newData);
+
+    const requestOptions = {
+      method: "PUT",
+    };
+
+    fetch(`http://127.0.0.1:8000/inventory/update_quantity/abc/${data[index].name}/${newQuantity}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
   }
 
   const deleteItem = (index: number) => {
     const newData = [...data];
     newData.splice(index, 1);
     setData(newData);
+
+    const requestOptions = {
+      method: "DELETE",
+    };
+
+    fetch(`http://127.0.0.1:8000/inventory/remove/${data[index].name}/abc`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
   }
 
   const addItem = (name: string, quantity: number) => {
     const newData = [...data];
     newData.push(createData(name, quantity));
     setData(newData);
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "product": name,
+      "quantity": quantity,
+      "userid": "abc"
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+    };
+
+    fetch("http://127.0.0.1:8000/inventory/add_item", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
   }
 
   return (
@@ -85,7 +137,7 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {data.map((row, idx) => (
+            {data && data.map((row, idx) => (
               <tr key={idx}>
                 <td>
                   <p className='text-lg font-semibold'>

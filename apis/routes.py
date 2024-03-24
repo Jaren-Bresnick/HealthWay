@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+
 
 import sys
 import os
@@ -49,6 +51,14 @@ class ImageData(BaseModel):
     image_path: str = None
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 ''' -------------- USER ROUTES --------------- '''
@@ -150,7 +160,7 @@ async def add_item_route(item: Item):
     return {"message": "Item added to inventory"}
 
 @app.get("/inventory/get/{user_id}")
-def read_inventory(user_id: int):
+def read_inventory(user_id: str):
     inventory = get_inventory(user_id)
     if not inventory:
         raise HTTPException(status_code=404, detail="Inventory not found")
@@ -177,7 +187,7 @@ def update_item_quantity_by_id_route(id: int, item_quantity: int):
     return {"message": "Item quantity updated"}
 
 @app.get("/inventory/get_json/{user_id}")
-def read_inventory_products_and_quantities(user_id: int):
+def read_inventory_products_and_quantities(user_id: str):
     inventory = get_inventory(user_id)
     if not inventory:
         raise HTTPException(status_code=404, detail="Inventory not found")
@@ -187,7 +197,7 @@ def read_inventory_products_and_quantities(user_id: int):
     return products_and_quantities
 
 @app.get("/inventory/get_recipes/{user_id}")
-def get_all_recipes(user_id: int):
+def get_all_recipes(user_id: str):
     all_products = get_all_products(user_id)
     if not all_products:
         raise HTTPException(status_code=404, detail="Inventory not found")
