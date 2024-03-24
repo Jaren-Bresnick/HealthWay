@@ -21,7 +21,7 @@ export default function PrescriptionCard({
 }: PrescriptionCardProps) {
     return (
         <div className='border rounded-md p-3'>
-            <div className='grid grid-cols-1 md:grid-cols-5 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-5 gap-6'> {/* Increased gap for more space */}
                 {/* Updated to display medication image */}
                 <div className='col-span-2 rounded-md overflow-hidden flex justify-center items-center'>
                     <img src={imageUrl} alt={`${name} medication`} className="max-w-full max-h-full" />
@@ -31,7 +31,7 @@ export default function PrescriptionCard({
                         <p className='font-bold text-xl'>{name}</p>
                         <p className='text-slate-500'>{dosage}</p>
                     </div>
-                    <div className='grid grid-cols-2 gap-4'>
+                    <div className='grid grid-cols-2 gap-6'> {/* Increased gap here as well */}
                         <div className='flex flex-col items-center'>
                             <Typography variant="h6" component="div">{quantity}</Typography>
                             <p className='text-slate-500'>Quantity</p>
