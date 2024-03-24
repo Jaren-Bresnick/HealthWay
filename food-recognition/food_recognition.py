@@ -71,7 +71,7 @@ def identify_food_in_image(image_path):
     try:
         food_data = json.loads(response_text)
         food_names = [item["name"] for item in food_data["food_items"]]
-        return food_names
+        return food_data
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON from response for image {image_file}: {e}")
         return []
@@ -80,7 +80,7 @@ def main(image_path):
     configure_genai()
     # Call the function to process the single image file
     food_names = identify_food_in_image(image_path)
-    print("Food items found in the image:", ", ".join(food_names))
+    return food_names
 
 if __name__ == "__main__":
     import sys

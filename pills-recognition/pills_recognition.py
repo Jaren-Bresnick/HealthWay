@@ -5,7 +5,7 @@ import json
 def configure_genai():
     genai.configure(api_key="AIzaSyDiyZENflOTXzGKCmSaDZsxZ1ts8BoJnqo")
 
-def identify_food_in_image(image_path):
+def identify_pills_in_image(image_path):
     # Set up the model configuration
     generation_config = {
       "temperature": 0.4,
@@ -54,7 +54,7 @@ def identify_food_in_image(image_path):
 
     prompt_parts = [
         image_parts[0],
-        "\nGiven the image of the receipt, please generate a json file of 'food_items' that are present in the receipt and the quantity of each. Only put foods and items in the list that you are 70 percent sure of."
+        "\nGiven the prescription bottle label, please generate a json file of 'prescription items' that are present."
     ]
 
     # Generate content for the image
@@ -69,9 +69,9 @@ def identify_food_in_image(image_path):
 
     # Assuming response_text is directly parseable JSON; adjust if your actual response format differs
     try:
-        food_data = json.loads(response_text)
-        food_names = [item["name"] for item in food_data["food_items"]]
-        return food_data
+        prescription_data = json.loads(response_text)
+        pill_info = [item["name"] for item in prescription_data['prescription_items']]
+        return prescription_data
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON from response for image {image_file}: {e}")
         return []
@@ -79,8 +79,10 @@ def identify_food_in_image(image_path):
 def main(image_path):
     configure_genai()
     # Call the function to process the single image file
-    food_names = identify_food_in_image(image_path)
-    return food_names
+    pill_info = identify_pills_in_image(image_path)
+    print(pill_info)
+    return pill_info
+    print("Prescription items found in the image:", ", ".join(food_names))
 
 if __name__ == "__main__":
     import sys
