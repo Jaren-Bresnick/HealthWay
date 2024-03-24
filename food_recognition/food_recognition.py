@@ -80,6 +80,7 @@ def main(image_path):
     configure_genai()
     # Call the function to process the single image file
     food_names = identify_food_in_image(image_path)
+    print(food_names)
     return food_names
 
 if __name__ == "__main__":

@@ -66,3 +66,5 @@ def detect_and_track_object(image_paths):
         direction = "Could not determine the object's direction."
 
     return direction
+
+print(detect_and_track_object(["images/frame_1.jpg", "images/frame_2.jpg"]))  # Example usage
