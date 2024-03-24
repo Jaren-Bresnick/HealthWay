@@ -22,8 +22,3 @@ def process_images_and_detect_motion(image_paths):
     # Convert the result to JSON
     json_result = json.dumps(items_with_motion)
     return json_result
-
-# Example usage:
-image_paths = ["images/bottle_candy_1.jpg", "images/bottle_candy_2.jpg"]
-json_output = process_images_and_detect_motion(image_paths)
-print(json_output)
