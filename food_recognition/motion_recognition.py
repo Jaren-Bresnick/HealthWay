@@ -52,7 +52,7 @@ def draw_bounding_boxes_and_detect_object(image, net, output_layers):
 
 def detect_and_track_object(image_paths):
     # Load YOLO
-    net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+    net = cv2.dnn.readNet("/Users/shrisha/Desktop/FoodInventory/food_recognition/yolov3.weights", "/Users/shrisha/Desktop/FoodInventory/food_recognition/yolov3.cfg")
     layer_names = net.getLayerNames()
 
     # Fix for the IndexError

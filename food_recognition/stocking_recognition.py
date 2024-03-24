@@ -3,6 +3,8 @@ from motion_recognition import detect_and_track_object
 from pathlib import Path
 import mimetypes
 import google.generativeai as genai
+import asyncio
+
 
 
 def process_images_and_detect_motion(image_paths):
@@ -70,26 +72,19 @@ def process_images_and_detect_motion(image_paths):
     # Assuming response_text is directly parseable JSON; adjust if your actual response format differs
     try:
         food_data = json.loads(response_text)
-        food_items = [item["name"] for item in food_data["food_items"]]
+        food_items = food_data['food_items']
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON from response for image: {e}")
-        return []
+        return None, None
 
     # Detect and track the motion of objects in the images.
     # Assuming 'detect_and_track_object' returns a string indicating the direction of movement
     direction = detect_and_track_object(image_paths)
 
-
     # Combine the food items with the direction of motion
-    items_with_motion = {
-        "food_items": food_items["food_items"][0]["name"],
-        "quantity": food_items['food_items'][0]['quantity'],
-        "motion": direction
-    }
-
-    # Convert the result to JSON
-    json_result = json.dumps(items_with_motion)
-    return json_result
+    
+    
+    return food_items, direction
 
 if __name__ == "__main__":
     print(process_images_and_detect_motion(["images/frame_1.jpg", "images/frame_2.jpg"]))
