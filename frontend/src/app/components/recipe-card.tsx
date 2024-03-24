@@ -5,10 +5,12 @@ interface RecipeCardProps {
     image_link: string;
     title: string;
     domain: string;
-    calories: number;
-    carbs: number;
-    fat: number;
-    protein: number;
+    nutrition: {
+        calories: number;
+        carbs: number;
+        fat: number;
+        protein: number;
+    };
     link: string;
 }
 
@@ -16,10 +18,7 @@ export default function RecipeCard({
     image_link,
     title,
     domain,
-    calories,
-    carbs,
-    fat,
-    protein,
+    nutrition,
     link,
 }: RecipeCardProps) {
     return (
@@ -46,7 +45,7 @@ export default function RecipeCard({
 
                         <div className='flex flex-col items-center'>
                             <CircularProgress size="lg" value={15} determinate color='success'>
-                                <p className='font-black'>{calories}</p>
+                                <p className='font-black'>{nutrition?.calories ? parseFloat(nutrition.calories) : "N/A"}</p>
                             </CircularProgress>
                             <p className='text-slate-500'>Calories</p>
                         </div>
@@ -54,21 +53,21 @@ export default function RecipeCard({
 
                         <div className='flex flex-col items-center'>
                             <CircularProgress size="lg" value={15} determinate color='danger'>
-                                <p className='font-black'>{carbs}g</p>
+                                <p className='font-black'>{nutrition?.carbs ? parseFloat(nutrition.carbs) + "g" : "N/A"}</p>
                             </CircularProgress>
                             <p className='text-slate-500'>Carbs</p>
                         </div>
 
                         <div className='flex flex-col items-center'>
                             <CircularProgress size="lg" value={20} determinate>
-                                <p className='font-black'>{fat}g</p>
+                                <p className='font-black'>{nutrition?.fat ? parseFloat(nutrition.fat) + "g" : "N/A"}</p>
                             </CircularProgress>
                             <p className='text-slate-500'>Fat</p>
                         </div>
 
                         <div className='flex flex-col items-center'>
                             <CircularProgress size="lg" value={39} determinate color='neutral'>
-                                <p className='font-black'>{protein}g</p>
+                                <p className='font-black'>{nutrition?.protein ? parseFloat(nutrition.protein) + "g" : "N/A"}</p>
                             </CircularProgress>
                             <p className='text-slate-500'>Protein</p>
                         </div>

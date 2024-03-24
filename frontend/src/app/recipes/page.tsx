@@ -1,6 +1,19 @@
+'use client'
+
 import RecipeCard from '../components/recipe-card';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  
+  const [data, setdata] = useState(null)
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/inventory/get_recipes/abc')
+      .then(response => response.json())
+      .then(data => setdata(data));
+  }, []);
+
+ 
   return (
     <div className='flex flex-row justify-center'>
 
@@ -12,77 +25,16 @@ export default function Home() {
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
-          <RecipeCard
-            image_link="https://i2.supercook.com/c/1/9/3/c19335ce2bc248a247db3af3ac6dc4bd-0.jpg"
-            title="Mom's Classic Monkey Bread"
-            domain="allrecipes.com"
-            calories={200}
-            carbs={23}
-            fat={10}
-            protein={6}
-            link="https://www.allrecipes.com/recipe/21461/moms-classic-monkey-bread/"
-          />
-           <RecipeCard
-            image_link="https://i2.supercook.com/c/1/9/3/c19335ce2bc248a247db3af3ac6dc4bd-0.jpg"
-            title="Mom's Classic Monkey Bread"
-            domain="allrecipes.com"
-            calories={200}
-            carbs={23}
-            fat={10}
-            protein={6}
-            link="https://www.allrecipes.com/recipe/21461/moms-classic-monkey-bread/"
-          />
-          <RecipeCard
-            image_link="https://i2.supercook.com/3/c/b/6/3cb6804cb84ab0735988d1e8ada81607-0.jpg"
-            title="Classic Nachos"
-            domain="sidechef.com"
-            calories={270}
-            carbs={10}
-            fat={15}
-            protein={4}
-            link="https://www.allrecipes.com/recipe/21461/moms-classic-monkey-bread/"
-          />
-           <RecipeCard
-            image_link="https://i2.supercook.com/c/1/9/3/c19335ce2bc248a247db3af3ac6dc4bd-0.jpg"
-            title="Mom's Classic Monkey Bread"
-            domain="allrecipes.com"
-            calories={200}
-            carbs={23}
-            fat={10}
-            protein={6}
-            link="https://www.allrecipes.com/recipe/21461/moms-classic-monkey-bread/"
-          />
-          <RecipeCard
-            image_link="https://i2.supercook.com/a/9/6/c/a96c386123c29ad21c828951d62eec82-0.jpg"
-            title="Fruit Jam"
-            domain="recipeland.com"
-            calories={420}
-            carbs={20}
-            fat={5}
-            protein={2}
-            link="https://www.allrecipes.com/recipe/21461/moms-classic-monkey-bread/"
-          />
-         
-          <RecipeCard
-            image_link="https://i2.supercook.com/c/1/9/3/c19335ce2bc248a247db3af3ac6dc4bd-0.jpg"
-            title="Mom's Classic Monkey Bread"
-            domain="allrecipes.com"
-            calories={200}
-            carbs={23}
-            fat={10}
-            protein={6}
-            link="https://www.allrecipes.com/recipe/21461/moms-classic-monkey-bread/"
-          />
-          <RecipeCard
-            image_link="https://i2.supercook.com/c/1/9/3/c19335ce2bc248a247db3af3ac6dc4bd-0.jpg"
-            title="Mom's Classic Monkey Bread"
-            domain="allrecipes.com"
-            calories={200}
-            carbs={23}
-            fat={10}
-            protein={6}
-            link="https://www.allrecipes.com/recipe/21461/moms-classic-monkey-bread/"
-          />
+          {data && data.map((recipe, index) => (
+            <RecipeCard 
+              key={index} 
+              title={recipe.title}
+              image_link={recipe.img_url}
+              domain={recipe.domain}
+              nutrition={recipe.nutrition}
+              link={recipe.link}
+            />
+          ))}
         </div>
       </div>
     </div>

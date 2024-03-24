@@ -107,6 +107,3 @@ def get_recipes(ingredients: list[str]):
         recipies.append(recipe_to_add)
     
     return recipies
-
-# Example usage
-print(get_recipes(['garlic', 'flour', 'tomato', 'celery']))
