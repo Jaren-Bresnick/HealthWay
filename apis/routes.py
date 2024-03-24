@@ -15,7 +15,7 @@ from database.request_users_db import add_user, get_user, remove_user, update_us
 from database.request_userhealth_db import add_userhealth, get_userhealth, remove_userhealth, update_userhealth_gender, update_userhealth_height, update_userhealth_weight, update_userhealth_age, update_userhealth_activity_level
 from database.request_inventory_db import add_item, get_inventory, remove_item, remove_item_by_id, update_item_quantity, update_item_quantity_by_id, get_all_products
 from recipe_api.recipe_api import get_recipes
-import pills_recognition as pills_recognition
+import pills_recognition.pills_recognition as pills_recognition
 
 class User(BaseModel):
     userid: str
