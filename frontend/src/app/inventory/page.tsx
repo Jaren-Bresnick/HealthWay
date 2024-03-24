@@ -14,6 +14,8 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
+import { useRouter } from 'next/navigation'
+
 
 function createData(
   name: string,
@@ -24,10 +26,12 @@ function createData(
 
 export default function Home() {
 
+  const router = useRouter()
+
+
   const [data, setData] = useState(null);
   const [openAddItemModal, setOpenAddItemModal] = useState(false);
-  const [openReceiptModal, setOpenReceiptModal] = useState(false);
-  const [openPantryModal, setOpenPantryModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -40,7 +44,7 @@ export default function Home() {
         }
         setData(toAdd);
       });
-  }, []);
+  }, [loading]);
 
   const increaseQuantity = (index: number) => {
     const newData = [...data];
@@ -118,6 +122,51 @@ export default function Home() {
       .catch((error) => console.error(error));
   }
 
+  const handlePantryImageUpload = async (event: any) => {
+    setLoading(true);
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.set('file', file);
+
+    const requestOptions = {
+      method: "POST",
+      body: formData,
+    };
+
+    const data = await fetch("http://127.0.0.1:8000/process_image/pantry", requestOptions)
+
+    if (data.status !== 200) {
+      alert('Error processing pantry image');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+  }
+
+  const handleReceiptImageUpload = async (event: any) => {
+    setLoading(true);
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.set('file', file);
+
+    const requestOptions = {
+      method: "POST",
+      body: formData,
+    };
+
+    const data = await fetch("http://127.0.0.1:8000/process_image/receipt", requestOptions)
+
+    if (data.status !== 200) {
+      alert('Error processing receipt image');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+  }
   return (
     <div className='flex flex-row justify-center'>
 
@@ -177,13 +226,32 @@ export default function Home() {
         </Button>
 
         <div className='grid grid-cols-2 gap-4'>
-          <Button color="neutral" variant="outlined" onClick={() => setOpenReceiptModal(true)}>
-            Scan Receipt
-          </Button>
+          
+        <div className='flex justify-center'>
+            <input type="file" name="receipt_img" id="receipt_img" className='hidden' accept="image/*" onInput={handleReceiptImageUpload} />
+            {!loading ?
+              <label
+                htmlFor="receipt_img"
+                className='px-4 py-2 border-2 bg-white w-full rounded-lg text-black text-center hover:cursor-pointer text-sm'>
+                Upload Receipt Image
+              </label> :
+              <Button className='bg-white w-full px-4 py-2' loading></Button>
+            }
+          </div>
 
-          <Button color="neutral" variant="outlined" onClick={() => setOpenPantryModal(true)}>
-            Scan Pantries
-          </Button>
+
+
+          <div className='flex justify-center'>
+            <input type="file" name="pantry_img" id="pantry_img" className='hidden' accept="image/*" onInput={handlePantryImageUpload} />
+            {!loading ?
+              <label
+                htmlFor="pantry_img"
+                className='px-4 py-2 border-2 bg-white w-full rounded-lg text-black text-center hover:cursor-pointer text-sm'>
+                Upload Pantry Image
+              </label> :
+              <Button className='bg-white w-full px-4 py-2' loading></Button>
+            }
+          </div>
 
         </div>
 

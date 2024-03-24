@@ -1,6 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import File, UploadFile
+import mimetypes
+import asyncio
+
 
 
 import sys
@@ -214,18 +218,19 @@ def get_all_recipes(user_id: str):
 
 ''' -------------- IMAGE PROCESSING ROUTES --------------- '''
 
-@app.post("/process_image/")
-def process_image(data: ImageData):
-    type_of_image = data.type_of_image
-    image_path = data.image_path
-    json_file = ""
+@app.post("/process_image/{type_of_image}")
+def process_image(file: UploadFile, type_of_image: str):
+    
+    data = file.file.read()
+    mimetype, _ = mimetypes.guess_type(file.filename)
+
 
     if type_of_image == "receipt":
-        json_file = receipt_recognition.identify_food_in_image(image_path)
+        json_file = receipt_recognition.identify_food_in_image(data, mimetype)
     elif type_of_image == "pantry":
-        json_file = food_recognition.identify_food_in_image(image_path)
+        json_file = food_recognition.identify_food_in_image(data, mimetype)
     elif type_of_image == "pills":
-        json_file = pills_recognition.identify_pills_in_image(image_path)
+        json_file = pills_recognition.identify_pills_in_image(data, mimetype)
     elif type_of_image == "stocking":
         json_file = stocking_recognition.main()
     else:
@@ -244,20 +249,41 @@ def process_image(data: ImageData):
 
         add_or_update_pill(pill)
 
+
     # Convert json file output to an 'item' object and take quantity from json file
     elif type_of_image in ["receipt", "pantry", "stocking"]:
-        item = Item(product=json_file["food_items"][0]["name"],
-                    quantity=json_file["food_items"][0]["quantity"],
-                    userid="1")
+        print('here')
+        current_inventory = read_inventory_products_and_quantities("abc")
+        
+        
+        for item in json_file["food_items"]:
+            
+            item = Item(product=item["name"],
+                        quantity=item["quantity"],
+                        userid="abc")
+            
+            print(item)
+            
+            # If the image is a receipt or pantry, add/update the item to inventory
+            # If the image is stocking, the action should be determined by the main function of stocking_recognition
+            if type_of_image in ["receipt", "pantry"]:
+                if item.product in current_inventory:
+                    update_item_quantity("abc", item.product, current_inventory[item.product] + item.quantity)
+                    print('ran update')
+                else:
+                    asyncio.run(add_item_route(item))
+                    print('ran add')
+                
+            elif type_of_image == "stocking":
+                if json_file["motion"] == "Out":
+                    if item.product in current_inventory:
+                        update_item_quantity("abc", item.product, current_inventory[item.product] - item.quantity)
+                    else:
+                        remove_item_route(item)
+                elif json_file["motion"] == "In":
+                    if item.product in current_inventory:
+                        update_item_quantity("abc", item.product, current_inventory[item.product] + item.quantity)
+                    else:
+                        asyncio.run(add_item_route(item))
 
-    # If the image is a receipt or pantry, add/update the item to inventory
-    # If the image is stocking, the action should be determined by the main function of stocking_recognition
-    if type_of_image in ["receipt", "pantry"]:
-        add_or_update_item(item)
-    elif type_of_image == "stocking":
-        if json_file["motion"] == "Out":
-            remove_item_route(item)
-        elif json_file["motion"] == "In":
-            add_item_route(item)
-
-    return {"message": "Processed successfully", "item": item}
+    return {"message": "Processed successfully"}
