@@ -20,7 +20,7 @@ export default function Home() {
       <div className='m-10 flex flex-col space-y-4 max-w-[1100px]'>
 
         <div className='flex flex-col'>
-          <p className='font-bold text-2xl'>Recipies made for Daniel</p>
+          <p className='font-bold text-2xl'>Recipes made for Shrisha</p>
           <p className='text-slate-500'>Here are a list of curated recipies for you. These recipies are made to match your dietary preferences and fitness goals while ensuring minimal food waste, giving you real food you can make with the things you have in your kitchen right now.</p>
         </div>
 
