@@ -62,17 +62,18 @@ export default function Home() {
             Today is {moment().format('dddd')}. Here is a list of pills you should take today. Please review them carefully.
           </Typography>
         </div>
-        <Grid container spacing={2}>
-          {days.map((date, index) => (
-            <Grid item key={index} xs={12} sm={6} md={4} lg={true} style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              height: '150px',
-              backgroundColor: isToday(date) ? '#add8e6' : '#ffffff',
-            }}>
+        <Grid container spacing={4}> {/* Adjust this value to increase spacing between boxes */}
+        {days.map((date, index) => (
+          <Grid item key={index} xs={12} sm={6} md={4} lg={true} style={{
+            border: '1px solid #ccc',
+            borderRadius: '8px',
+            padding: '8px',
+            margin: '3px', // You can also add margins here for additional space
+            display: 'flex',
+            flexDirection: 'column',
+            height: '150px',
+            backgroundColor: isToday(date) ? '#add8e6' : '#ffffff',
+          }}>
               <div style={{ marginBottom: 'auto' }}>
                 <Typography variant="subtitle1" style={{ fontWeight: 'bold', textAlign: 'center' }}>
                   {date.format('dddd')}
