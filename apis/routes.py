@@ -330,6 +330,29 @@ async def process_video(file: UploadFile = File(...)):
     finally:
         await file.close()
 
-    video_analysis(temp_path)
+    food_items, direction = video_analysis(temp_path)
+    
+    if (food_items == None):
+        return {"message": "Processed not workd"}
+    
+    print('here')
+    print(food_items)
+    
+    current_inventory = read_inventory_products_and_quantities("abc")
+
+    for item in food_items:
+        newItem = Item(product=item["name"],
+                    quantity=item["quantity"],
+                    userid="abc")
+        if direction == "Out":
+            if item["name"] in current_inventory:
+                update_item_quantity("abc", item["name"], current_inventory[item["name"]] - item["quantity"])
+            else:
+                remove_item_route(newItem)
+        elif direction == "In":
+            if item["name"] in current_inventory:
+                update_item_quantity("abc", item["name"], current_inventory[item["name"]] + item["quantity"])
+            else:
+                await add_item_route(newItem)
 
     return {"message": "Processed successfully"}
