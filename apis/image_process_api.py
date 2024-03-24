@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import sys
+sys.path.append('../food_recognition')
 import food_recognition
 import receipt_recognition
 import stocking_recognition
