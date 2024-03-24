@@ -30,16 +30,25 @@ def draw_bounding_boxes_and_detect_object(image, net, output_layers):
                 class_ids.append(class_id)
 
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+
+    # Ensure indexes is a numpy array
+    if isinstance(indexes, tuple):
+        indexes = indexes[0] if len(indexes) > 0 else []
+
+    if len(indexes) > 0 and isinstance(indexes, np.ndarray):
+        indexes = indexes.flatten()
+
     main_object_center_x = None
-    for i in indexes.flatten():
+    for i in indexes:
         x, y, w, h = boxes[i]
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
         text = f"{class_ids[i]}: {confidences[i]:.2f}"
         cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
         if main_object_center_x is None or confidences[i] > main_object_center_x['confidence']:
             main_object_center_x = {'x_center': (x + w / 2) / width, 'confidence': confidences[i]}
-    
+
     return image, main_object_center_x['x_center'] if main_object_center_x else None
+
 
 def detect_and_track_object(image_paths):
     # Load YOLO
@@ -67,4 +76,3 @@ def detect_and_track_object(image_paths):
 
     return direction
 
-# print(detect_and_track_object(["images/frame_1.jpg", "images/frame_2.jpg"]))  # Example usage

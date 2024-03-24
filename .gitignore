@@ -47,8 +47,11 @@ env/
 .env
 env
 .venv
+venv
 
 
 #yolo model
 yolov3.cfg
 yolov3.weights
+
+pills_recognition/node_modules
