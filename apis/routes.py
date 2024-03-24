@@ -1,10 +1,11 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile
 import mimetypes
 import asyncio
-
+from typing import Optional
+from datetime import date
 
 
 import sys
@@ -20,6 +21,7 @@ import food_recognition.stocking_recognition as stocking_recognition
 from database.request_users_db import add_user, get_user, remove_user, update_user_email, update_user_firstname, update_user_lastname, update_user_password, get_all_users
 from database.request_userhealth_db import add_userhealth, get_userhealth, remove_userhealth, update_userhealth_gender, update_userhealth_height, update_userhealth_weight, update_userhealth_age, update_userhealth_activity_level
 from database.request_inventory_db import add_item, get_inventory, remove_item, remove_item_by_id, update_item_quantity, update_item_quantity_by_id, get_all_products
+from database.request_pharmacy_db import add_or_update_pill, get_pills, remove_pill
 from recipe_api.recipe_api import get_recipes
 import pills_recognition.pills_recognition as pills_recognition
 
@@ -44,11 +46,13 @@ class Item(BaseModel):
     userid: str
 
 class Pill(BaseModel):
-    product: str
-    dosage: str
-    quantity: int
-    refill_date: str
-    expiration_date: str
+    name: str
+    dose_size: str
+    pill_count: int
+    refill_date: Optional[date]
+    expiry_date: Optional[date]
+    description_of_medication: str
+    pills_used_per_day: int
 
 class ImageData(BaseModel):
     type_of_image: str
@@ -211,9 +215,24 @@ def get_all_recipes(user_id: str):
 
     return get_recipes(product_list)
     
-''' ----------- PHARMACY ROUTES ----------- '''
+''' ----------- PHARMACY ROUTES -------------- '''
 
+@app.post("/pills/add_or_update")
+async def add_or_update_pill_route(pill: Pill, user_id: str):
+    add_or_update_pill(pill.dict(), user_id)
+    return {"message": "Pill added or updated"}
 
+@app.get("/pills/get/{user_id}")
+def get_pills_route(user_id: str):
+    pills = get_pills(user_id)
+    if not pills:
+        raise HTTPException(status_code=404, detail="No pills found")
+    return pills
+
+@app.delete("/pills/remove/{pill_name}/{user_id}")
+def remove_pill_route(pill_name: str, user_id: str):
+    remove_pill(pill_name, user_id)
+    return {"message": "Pill removed from the list"}
 
 
 ''' -------------- IMAGE PROCESSING ROUTES --------------- '''
