@@ -215,7 +215,8 @@ def get_all_recipes(user_id: str):
 ''' -------------- IMAGE PROCESSING ROUTES --------------- '''
 
 @app.post("/process_image/")
-def process_image(data: ImageData):
+@app.get("/inventory/get_json/{user_id}")   #DANIEL HUYNH LOOK AT THIS
+def process_image(data: ImageData, user_id: str):
     type_of_image = data.type_of_image
     image_path = data.image_path
     json_file = ""
@@ -253,7 +254,10 @@ def process_image(data: ImageData):
     # If the image is a receipt or pantry, add/update the item to inventory
     # If the image is stocking, the action should be determined by the main function of stocking_recognition
     if type_of_image in ["receipt", "pantry"]:
-        add_or_update_item(item)
+        for product in read_inventory_products_and_quantities(user_id).keys():
+            if product == item.product:
+                update_item_quantity_route(user_id, item.product, item.quantity)
+                return {"message": "Processed successfully", "item": item}
     elif type_of_image == "stocking":
         if json_file["motion"] == "Out":
             remove_item_route(item)
