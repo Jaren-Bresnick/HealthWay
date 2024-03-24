@@ -16,8 +16,8 @@ sys.path.append(os.path.abspath('../pills_recognition'))
 
 import food_recognition.food_recognition as food_recognition
 import food_recognition.receipt_recognition as receipt_recognition
-import food_recognition.motion_recognition as motion_recognition
-import food_recognition.stocking_recognition as stocking_recognition
+# import food_recognition.motion_recognition as motion_recognition
+# import food_recognition.stocking_recognition as stocking_recognition
 from database.request_users_db import add_user, get_user, remove_user, update_user_email, update_user_firstname, update_user_lastname, update_user_password, get_all_users
 from database.request_userhealth_db import add_userhealth, get_userhealth, remove_userhealth, update_userhealth_gender, update_userhealth_height, update_userhealth_weight, update_userhealth_age, update_userhealth_activity_level
 from database.request_inventory_db import add_item, get_inventory, remove_item, remove_item_by_id, update_item_quantity, update_item_quantity_by_id, get_all_products
@@ -250,8 +250,8 @@ def process_image(file: UploadFile, type_of_image: str):
         json_file = food_recognition.identify_food_in_image(data, mimetype)
     elif type_of_image == "pills":
         json_file = pills_recognition.identify_pills_in_image(data, mimetype)
-    elif type_of_image == "stocking":
-        json_file = stocking_recognition.main()
+    # elif type_of_image == "stocking":
+    #     json_file = stocking_recognition.main()
     else:
         raise HTTPException(status_code=400, detail="Invalid image type. Please enter 'receipt', 'pantry', or 'stocking'.")
 

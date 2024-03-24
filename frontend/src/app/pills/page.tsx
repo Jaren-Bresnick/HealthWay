@@ -17,50 +17,50 @@ export default function Home() {
   );
 
 
-  
+
   const prescriptionItems = [
     {
-      name: "GENERIC MEDICATION",
+      name: "Amoxicillin",
       dose_size: "2 tablets",
       pill_count: 180,
-      refill_date: null,
-      expiry_date: "2/16",
-      description_of_medication: "No additional instructions", // Assuming a default value for demonstration
-      pills_used_per_day: 6,
+      refill_date: "01/10",
+      expiry_date: "02/16",
+      description_of_medication: "Make sure to take after a meal", // Assuming a default value for demonstration
+      pills_used_per_day: 1,
       imageUrl: "pill.jpg"
-    }, 
+    },
     {
-      name: "GENERIC MEDICATION",
-      dose_size: "2 tablets",
-      pill_count: 180,
-      refill_date: null,
-      expiry_date: "2/16",
-      description_of_medication: "No additional instructions", // Assuming a default value for demonstration
-      pills_used_per_day: 6,
+      name: "Neurontin",
+      dose_size: "1 tablet",
+      pill_count: 78,
+      refill_date: "02/29",
+      expiry_date: "03/28",
+      description_of_medication: "Take one before every meal (breakfast, lunch, and dinner)", // Assuming a default value for demonstration
+      pills_used_per_day: 3,
       imageUrl: "pill.jpg"
-    }, 
+    },
     {
-      name: "GENERIC MEDICATION",
-      dose_size: "2 tablets",
-      pill_count: 180,
-      refill_date: null,
-      expiry_date: "2/16",
-      description_of_medication: "No additional instructions", // Assuming a default value for demonstration
-      pills_used_per_day: 6,
+      name: "Roxicodone",
+      dose_size: "1 tablet",
+      pill_count: 40,
+      refill_date: "05/01",
+      expiry_date: "05/01",
+      description_of_medication: "Take in the morning after a meal", // Assuming a default value for demonstration
+      pills_used_per_day: 1,
       imageUrl: "pill.jpg"
-    }, 
+    },
     {
-      name: "GENERIC MEDICATION",
-      dose_size: "2 tablets",
-      pill_count: 180,
+      name: "Triamcinolone Cream",
+      dose_size: "1 mL",
+      pill_count: "100 mL",
       refill_date: null,
-      expiry_date: "2/16",
-      description_of_medication: "No additional instructions", // Assuming a default value for demonstration
-      pills_used_per_day: 6,
+      expiry_date: "08/16",
+      description_of_medication: "Apply a pea sized ammount on top of rash once daily", // Assuming a default value for demonstration
+      pills_used_per_day: 1,
       imageUrl: "pill.jpg"
-    }, 
-  
-    
+    },
+
+
     // Additional prescription items can be added here
   ];
 
@@ -78,37 +78,37 @@ export default function Home() {
           </Typography>
         </div>
         <Grid container spacing={4}>
-  {days.map((date, index) => (
-    <Grid item key={index} xs={12} sm={6} md={4} lg={true} style={{
-      border: '1px solid #ccc',
-      borderRadius: '8px',
-      padding: '8px',
-      margin: '2px',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '150px',
-      backgroundColor: isToday(date) ? '#add8e6' : '#ffffff',
-    }}>
-      <div style={{ marginBottom: 'auto' }}>
-        <Typography variant="subtitle1" style={{ fontWeight: 'bold', textAlign: 'center' }}>
-          {date.format('dddd')}
-        </Typography>
-        <Typography variant="body2" style={{ textAlign: 'center' }}>
-          {date.format('MMM D')}
-        </Typography>
-      </div>
-      <div style={{ marginTop: 'auto', textAlign: 'center' }}>
-        <Typography variant="body2" style={{ opacity: 0.7 }}>
-          {prescriptionItems
-            .filter(item => item.pills_used_per_day > 1)
-            .map(item => capitalizeEachWord(item.name.toLowerCase()))
-            .join(', ')
-          }
-        </Typography>
-      </div>
-    </Grid>
-  ))}
-</Grid>
+          {days.map((date, index) => (
+            <Grid item key={index} xs={12} sm={6} md={4} lg={true} style={{
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              padding: '8px',
+              margin: '2px',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '150px',
+              backgroundColor: isToday(date) ? '#add8e6' : '#ffffff',
+            }}>
+              <div style={{ marginBottom: 'auto' }}>
+                <Typography variant="subtitle1" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                  {date.format('dddd')}
+                </Typography>
+                <Typography variant="body2" style={{ textAlign: 'center' }}>
+                  {date.format('MMM D')}
+                </Typography>
+              </div>
+              <div style={{ marginTop: 'auto', textAlign: 'center' }}>
+                <Typography variant="body2" style={{ opacity: 0.7 }}>
+                  {prescriptionItems
+                    .filter(item => item.pills_used_per_day >= 1)
+                    .map(item => capitalizeEachWord(item.name.toLowerCase()))
+                    .join(', ')
+                  }
+                </Typography>
+              </div>
+            </Grid>
+          ))}
+        </Grid>
 
 
         <div className='flex flex-col mt-12' >
