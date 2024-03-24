@@ -18,7 +18,7 @@ def get_inventory(user_id):
     cursor = db.cursor()
     cursor.execute(
         'SELECT Product, Quantity FROM "Inventory" WHERE UserId = %s',
-        (user_id)
+        (user_id,)
     )
     inventory = cursor.fetchall()
     cursor.close()
@@ -41,7 +41,7 @@ def remove_item_by_id(inv_id):
     cursor = db.cursor()
     cursor.execute(
         'DELETE FROM "Inventory" WHERE ID = %s',
-        (inv_id)
+        (inv_id,)
     )
     db.commit()
     cursor.close()
@@ -75,7 +75,7 @@ def get_all_products(user_id):
     cursor = db.cursor()
     cursor.execute(
         'SELECT Product FROM "Inventory" WHERE UserId = %s',
-        (user_id)
+        (user_id,)
     )
     products = cursor.fetchall()
     cursor.close()

@@ -19,7 +19,7 @@ def get_user(user_id):
     cursor = db.cursor()
     cursor.execute(
         'SELECT * FROM "Users" WHERE UserId = %s',
-        (user_id)
+        (user_id,)
     )
     user = cursor.fetchone()
     cursor.close()
@@ -31,7 +31,7 @@ def remove_user(user_id):
     cursor = db.cursor()
     cursor.execute(
         'DELETE FROM "Users" WHERE UserId = %s',
-        (user_id)
+        (user_id,)
     )
     db.commit()
     cursor.close()
