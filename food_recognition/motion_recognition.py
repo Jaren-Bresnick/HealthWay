@@ -76,4 +76,4 @@ def detect_and_track_object(image_paths):
 
     return direction
 
-print(detect_and_track_object(["images/frame_1.jpg", "images/frame_2.jpg"]))  # Example usage
+#print(detect_and_track_object(["images/frame_1.jpg", "images/frame_2.jpg"]))  # Example usage
