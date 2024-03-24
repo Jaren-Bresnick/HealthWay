@@ -17,7 +17,7 @@ class Item(BaseModel):
     quantity: int
     userid: str
 
-class Pill(BaseMode1):
+class Pill(BaseModel):
     product: str
     dosage: str
     quantity: int
