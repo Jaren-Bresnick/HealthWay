@@ -3,32 +3,6 @@ sys.path.append('../database')
 from connect_db import connect_to_postgres 
 
 
-def test():
-    db = connect_to_postgres()
-    cursor = db.cursor()
-    cursor.execute("""
-        SELECT table_name
-        FROM information_schema.tables
-        WHERE table_schema = 'public'
-    """)
-    tables = cursor.fetchall()
-    val = []
-    for table in tables:
-        val.append(table[0])
-    cursor.close()
-    db.close()
-    return val
-
-def addnewtable():
-    db = connect_to_postgres()
-    cursor = db.cursor()
-    cursor.execute(
-        'CREATE TABLE "users2" (UserId VARCHAR(255) PRIMARY KEY, HashedPassword VARCHAR(255), FirstName VARCHAR(255), LastName VARCHAR(255), Email VARCHAR(255)); commit;'
-    )
-    db.commit()
-    cursor.close()
-    db.close()
-
 def add_user(user_id, password, firstname, lastname, email):
     db = connect_to_postgres()
     cursor = db.cursor()
@@ -44,8 +18,8 @@ def get_user(user_id):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "SELECT * FROM Users WHERE UserId = %s",
-        (user_id)
+        'SELECT * FROM "Users" WHERE UserId = %s',
+        (user_id,)
     )
     user = cursor.fetchone()
     cursor.close()
@@ -56,8 +30,8 @@ def remove_user(user_id):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "DELETE FROM Users WHERE UserId = %s",
-        (user_id)
+        'DELETE FROM "Users" WHERE UserId = %s',
+        (user_id,)
     )
     db.commit()
     cursor.close()
@@ -67,7 +41,7 @@ def update_user_password(user_id, password):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "UPDATE Users SET HashedPassword = %s WHERE UserId = %s",
+        'UPDATE "Users" SET HashedPassword = %s WHERE UserId = %s',
         (password, user_id)
     )
     db.commit()
@@ -78,7 +52,7 @@ def update_user_email(user_id, email):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "UPDATE Users SET Email = %s WHERE UserId = %s",
+        'UPDATE "Users" SET Email = %s WHERE UserId = %s',
         (email, user_id)
     )
     db.commit()
@@ -89,7 +63,7 @@ def update_user_firstname(user_id, firstname):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "UPDATE Users SET FirstName = %s WHERE UserId = %s",
+        'UPDATE "Users" SET FirstName = %s WHERE UserId = %s',
         (firstname, user_id)
     )
     db.commit()
@@ -100,7 +74,7 @@ def update_user_lastname(user_id, lastname):
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "UPDATE Users SET LastName = %s WHERE UserId = %s",
+        'UPDATE "Users" SET LastName = %s WHERE UserId = %s',
         (lastname, user_id)
     )
     db.commit()
@@ -111,7 +85,7 @@ def get_all_users():
     db = connect_to_postgres()
     cursor = db.cursor()
     cursor.execute(
-        "SELECT * FROM Users"
+        'SELECT * FROM "Users"'
     )
     users = cursor.fetchall()
     cursor.close()

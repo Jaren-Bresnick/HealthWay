@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import List
 import sys
 sys.path.append('..')
-from database.request_users_db import add_user, get_user, remove_user, update_user_email, update_user_firstname, update_user_lastname, update_user_password, get_all_users, test, addnewtable
+from database.request_users_db import add_user, get_user, remove_user, update_user_email, update_user_firstname, update_user_lastname, update_user_password, get_all_users
 
 class User(BaseModel):
     userid: str
@@ -14,15 +14,6 @@ class User(BaseModel):
 
 app = FastAPI()
 
-@app.get("/users/test")
-async def test_route():
-    value = test()
-    return {"message": value}
-
-@app.post("/users/addnewtable")
-async def addnewtable_route():
-    addnewtable()
-    return {"message": "Table added"}
 
 @app.post("/users/add_user")
 async def add_user_route(user: User):
